@@ -98,7 +98,6 @@ function filterUnfundedOnly() {
   // use the function we previously created to add the unfunded games to the DOM
   addGamesToPage(unfunded);
 }
-filterUnfundedOnly();
 // show only games that are fully funded
 function filterFundedOnly() {
   deleteChildElements(gamesContainer);
@@ -107,11 +106,9 @@ function filterFundedOnly() {
   let funded = GAMES_JSON.filter((game) => {
     return game.pledged >= game.goal;
   });
-  console.log(funded.length);
   // use the function we previously created to add unfunded games to the DOM
   addGamesToPage(funded);
 }
-filterFundedOnly();
 // show all games
 function showAllGames() {
   deleteChildElements(gamesContainer);
@@ -132,33 +129,50 @@ allBtn.addEventListener("click", showAllGames);
 /*************************************************************************************
  * Challenge 6: Add more information at the top of the page about the company.
  * Skills used: template literals, ternary operator
-*/
+ */
 
 // grab the description container
 const descriptionContainer = document.getElementById("description-container");
 
 // use filter or reduce to count the number of unfunded games
-
+let numUnfunded = GAMES_JSON.reduce((acc, game) => {
+  if (game.pledged < game.goal) {
+    return acc + 1;
+  }
+  return acc;
+}, 0);
 
 // create a string that explains the number of unfunded games using the ternary operator
-
-
+let displayStr = `A total of $${totalRaised.toLocaleString(
+  "en-US"
+)} has been raised for ${GAMES_JSON.length}. 
+    Currently, ${numUnfunded} ${
+  numUnfunded == 1 ? "game" : "games"
+} remains unfunded.
+    We need you help to fund these amazing games!`;
 // create a new DOM element containing the template string and append it to the description container
-
+let dispUnfundedStr = document.createElement("p");
+dispUnfundedStr.innerHTML = displayStr;
+descriptionContainer.appendChild(dispUnfundedStr);
 /************************************************************************************
  * Challenge 7: Select & display the top 2 games
- * Skills used: spread operator, destructuring, template literals, sort 
+ * Skills used: spread operator, destructuring, template literals, sort
  */
 
 const firstGameContainer = document.getElementById("first-game");
 const secondGameContainer = document.getElementById("second-game");
 
-const sortedGames =  GAMES_JSON.sort( (item1, item2) => {
-    return item2.pledged - item1.pledged;
+const sortedGames = GAMES_JSON.sort((item1, item2) => {
+  return item2.pledged - item1.pledged;
 });
 
 // use destructuring and the spread operator to grab the first and second games
-
+let [first, second, ...others] = sortedGames;
 // create a new element to hold the name of the top pledge game, then append it to the correct element
-
+let topGame = document.createElement("p");
+topGame.innerHTML = first.name;
+firstGameContainer.appendChild(topGame);
 // do the same for the runner up item
+let runnerUp = document.createElement("p");
+runnerUp.innerHTML = second.name;
+secondGameContainer.appendChild(runnerUp);
